@@ -100,3 +100,41 @@ function bppfn_language_textdomain_init() {
 
 // Add actions
 add_action( 'init', 'bppfn_language_textdomain_init' );
+
+/**
+ * Check whether the member posting is blocked
+ */
+function bp_is_member_posting_blocked( $user_id ) {
+    $user_id = absint( $user_id );
+    $is_blocked = false;
+
+    if ( $user_id > 0 ) {
+        $is_blocked_meta = get_user_meta( $user_id, 'bpbmp-block-member-posting', true );
+        if ( $is_blocked_meta == 1 ) {
+            $is_blocked = true;
+        }
+    }
+
+
+    return apply_filters( 'bp_is_member_posting_blocked', $is_blocked, $user_id );
+
+}
+
+/**
+ * Check whether the activity commenting is blocked
+ */
+function block_activity_comments( $user_id ) {
+    $user_id = absint( $user_id );
+    $is_blocked = false;
+
+    if ( $user_id > 0 ) {
+        $is_blocked_meta = get_user_meta( $user_id, 'bpbmp-block-member-commenting', true );
+        if ( $is_blocked_meta == 1 ) {
+            $is_blocked = true;
+        }
+    }
+
+
+    return apply_filters( 'bp_is_member_posting_blocked', $is_blocked, $user_id );
+
+}

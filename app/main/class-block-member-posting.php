@@ -35,7 +35,10 @@ if ( ! class_exists( 'BP_Block_Member_Posting' ) ) {
             // Enqueue front-end scripts
             add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_style_scripts' ), 100 );
 
+            add_filter( 'bp_get_template_part', array( $this, 'block_activity_form' ), 10, 3 );
 
+            add_filter( 'bp_nouveau_get_activity_entry_buttons', array( $this,
+                'block_activity_comments' ), 10, 2 );
         }
 
 
@@ -75,6 +78,46 @@ if ( ! class_exists( 'BP_Block_Member_Posting' ) ) {
             );
             wp_enqueue_script( 'bp-block-member-posting-custom-script' );
 
+        }
+
+        /**
+         * Block new activity form if the member is blocked.
+         *
+         * @param $templates
+         * @param $slug
+         * @param $name
+         *
+         * @return mixed
+         */
+        public function block_activity_form( $templates, $slug, $name ) {
+
+            $user_id = get_current_user_id();
+
+            if ( $slug == 'activity/post-form' &&
+                 bp_is_member_posting_blocked( $user_id ) ) {
+                $templates = '';
+            }
+
+            return $templates;
+        }
+
+        /**
+         * Block new comment button if the member is blocked.
+         *
+         * @param $buttons
+         * @param $activity_id
+         *
+         * @return boolean
+         */
+        public function block_activity_comments ( $buttons, $activity_id ) {
+            $user_id = get_current_user_id();
+
+            if (
+                 bp_is_member_commenting_blocked( $user_id ) ) {
+                echo "<pre>" . print_r( $buttons, 1 )."</pre>";
+            }
+
+            return $buttons;
         }
 
 
