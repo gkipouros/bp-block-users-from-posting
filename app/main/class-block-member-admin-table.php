@@ -86,30 +86,35 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
     public function column_default( $item, $column_name ) {
         $result = '';
         switch ( $column_name ) {
-
-            case 'avatar':
-                $result = $item['avatar'];
-                break;
-            case 'member_id':
-                $result = $item['id'];
+            case 'user_login':
+                $result = "<span class='user_avatar'>" .
+                          $item['avatar'] .
+                          '</span>
+							<span class="user-login-username">' .
+                          $item['username'] .
+                          '</span>';
                 break;
             case 'member_name':
                 $result = "<a href='" . get_admin_url() . "user-edit.php?user_id=" . $item['id'] . "'> 
                 " . $item['name'] . "</a>";
                 break;
-
             case 'member_email':
                 $result = $item['email'];
                 break;
             case 'commenting_blocked':
-                $result = $item['commenting_blocked'];
+                $result = '';
+				if ( absint( $item['commenting_blocked'] ) == 1 ) {
+					$result = '<span class="dashicons dashicons-welcome-comments"></span>';
+				}
                 break;
             case 'posting_blocked':
-                $result = $item['posting_blocked'];
+                $result = '';
+                if ( absint( $item['posting_blocked'] ) == 1 ) {
+                    $result = '<span class="dashicons dashicons-dismiss"></span>';
+                }
                 break;
 
         }
-
 
         return $result;
     }
@@ -121,16 +126,13 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
      */
     public function get_columns() {
         return array(
-            'avatar'             => "",
-            'member_id'          => __( 'Member ID', 'bp-block-member-posting' ),
+            'user_login'         => __( 'Username', 'bp-block-member-posting' ),
             'member_name'        => __( 'Name', 'bp-block-member-posting' ),
             'member_email'       => __( 'Email', 'bp-block-member-posting' ),
-            'posting_blocked'    => __( 'Posting Blocked', 'bp-block-member-posting' ),
-            'commenting_blocked' => __( 'Commenting Blocked', 'bp-block-member-posting' ),
+            'posting_blocked'    => __( 'Posting', 'bp-block-member-posting' ),
+            'commenting_blocked' => __( 'Commenting', 'bp-block-member-posting' ),
 
         );
-
-
     }
 
 
@@ -212,6 +214,7 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
                     'id'                 => $user_id,
                     'name'               => $blocked_member_row->display_name,
                     'email'              => $blocked_member_row->user_email,
+                    'username'           => $blocked_member_row->user_login,
                     'posting_blocked'    => $posts_blocked,
                     'commenting_blocked' => $comments_blocked,
                     'avatar'             => $avatar,

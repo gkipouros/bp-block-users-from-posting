@@ -40,6 +40,27 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
 
             add_action( 'admin_menu',
                 array( $this, 'admin_blocked_members_page_menu' ), 20, 1 );
+            // Enqueue Back end scripts
+            add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_style_scripts' ), 100 );
+        }
+
+        /**
+         * Enqueue Admin style/script.
+         *
+         * @return void
+         */
+        public function admin_enqueue_style_scripts() {
+
+            // Custom plugin script.
+            wp_enqueue_style(
+                'bp-block-member-posting-admin-style',
+                BPBMFP_URL . 'assets/css/bp-block-member-posting-admin.css',
+                '',
+                BPBMFP_VERSION
+            );
+
+
+            wp_enqueue_script( 'ceu_user_reports-admin-custom-script' );
         }
 
         /**
@@ -165,9 +186,6 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
          * Callback function for the admin management page content
          */
         public function blocked_members_admin_page_callback() {
-
-
-
             $template = BPBMFP_PATH . 'templates/bp-block-members-admin-page.php';
 
             /**

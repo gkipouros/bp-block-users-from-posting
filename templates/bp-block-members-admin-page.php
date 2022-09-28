@@ -10,9 +10,9 @@ if ( function_exists( 'bp_core_fetch_avatar' ) ) {
 
 ?>
 	<div class="wrap">
-		<h1><?php _e( 'Block Member Posting for BuddyPress', 'bp-block-member-posting' ); ?></h1>
+		<h1><?php _e( 'BuddyPress Blocked Member List', 'bp-block-member-posting' ); ?></h1>
         <?php if ( ! empty( $blocked_members_table ) ) { ?>
-			<form id="bp-blocked-members-table" method="get">
+			<form id="bp-blocked-members-table" method="get"  >
 				<input type="hidden" name="page" value="blocked-members"/>
                 <?php
                 $blocked_members_table->prepare_items();
