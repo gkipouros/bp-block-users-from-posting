@@ -37,8 +37,10 @@ if ( ! class_exists( 'BP_Block_Member_Posting' ) ) {
 
             add_filter( 'bp_get_template_part', array( $this, 'block_activity_form' ), 10, 3 );
 
-            add_filter( 'bp_nouveau_get_activity_entry_buttons', array( $this,
-                'block_activity_comments' ), 10, 2 );
+            add_filter( 'bp_nouveau_get_activity_entry_buttons', array(
+                $this,
+                'block_activity_comments'
+            ), 10, 2 );
         }
 
 
@@ -91,7 +93,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting' ) ) {
          */
         public function block_activity_form( $templates, $slug, $name ) {
 
-            $user_id = get_current_user_id();
+            $user_id = absint( get_current_user_id() );
 
             if ( $slug == 'activity/post-form' &&
                  bp_is_member_posting_blocked( $user_id ) ) {
@@ -109,12 +111,13 @@ if ( ! class_exists( 'BP_Block_Member_Posting' ) ) {
          *
          * @return boolean
          */
-        public function block_activity_comments ( $buttons, $activity_id ) {
-            $user_id = get_current_user_id();
+        public function block_activity_comments( $buttons, $activity_id ) {
+            $user_id = absint( get_current_user_id() );
 
-            if (
-                 bp_is_member_commenting_blocked( $user_id ) ) {
-                echo "<pre>" . print_r( $buttons, 1 )."</pre>";
+            if ( $user_id > 0 && bp_is_member_commenting_blocked( $user_id ) ) {
+                if ( isset( $buttons['activity_conversation'] ) ) {
+                    unset( $buttons['activity_conversation'] );
+                }
             }
 
             return $buttons;

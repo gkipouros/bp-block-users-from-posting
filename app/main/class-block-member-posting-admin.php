@@ -37,6 +37,19 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
 
             add_action( 'edit_user_profile_update',
                 array( $this, 'store_admin_block_member_option' ), 20, 1 );
+
+            add_action( 'admin_menu',
+                array( $this, 'admin_blocked_members_page_menu' ), 20, 1 );
+        }
+
+        /**
+         * Get plugin admin area root page: settings.php for WPMS and tool.php for WP.
+         *
+         * @return string
+         */
+        private function get_root_admin_page() {
+
+            return is_multisite() ? 'settings.php' : 'tools.php';
         }
 
 
@@ -91,7 +104,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
 							>
 							<label for="block-commenting-for-this-member"><?php
                                 printf(
-                                    esc_html__( 'Block %s from posting new comments.',
+                                    esc_html__( 'Block %s from posting new activity comments.',
                                         'bp-block-member-posting' ),
                                     esc_html__( $user->display_name )
                                 ); ?></label>
@@ -132,6 +145,36 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
                     1
                 );
             }
+        }
+
+        /**
+         * Add a submenu for the admin management page
+         */
+        public function admin_blocked_members_page_menu() {
+            add_submenu_page(
+                $this->get_root_admin_page(),
+                __( 'Blocked Members Management for BuddyPress', 'bp-block-member-posting' ),
+                __( 'BP Block Members', 'bp-block-member-posting' ),
+                'manage_options',
+                'bp-block-member-posting',
+                array( $this, 'blocked_members_admin_page_callback' )
+            );
+        }
+
+        /**
+         * Callback function for the admin management page content
+         */
+        public function blocked_members_admin_page_callback() {
+
+
+
+            $template = BPBMFP_PATH . 'templates/bp-block-members-admin-page.php';
+
+            /**
+             * Add filter to manage the displayed template
+             */
+            $template = apply_filters( 'bp_blocked_members_admin_page_template', $template );
+            include_once( $template );
         }
     }
 
