@@ -29,7 +29,7 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
     /**
      * Const to declare number of posts to show per page in the table.
      */
-    const ROWS_PER_PAGE = 50;
+    const ROWS_PER_PAGE = 20;
 
     /**
      * BP_Block_Member_Admin_Table constructor.
@@ -103,9 +103,9 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
                 break;
             case 'commenting_blocked':
                 $result = '';
-				if ( absint( $item['commenting_blocked'] ) == 1 ) {
-					$result = '<span class="dashicons dashicons-welcome-comments"></span>';
-				}
+                if ( absint( $item['commenting_blocked'] ) == 1 ) {
+                    $result = '<span class="dashicons dashicons-welcome-comments"></span>';
+                }
                 break;
             case 'posting_blocked':
                 $result = '';
@@ -143,11 +143,22 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
      * @return mixed
      */
     static function get_blocked_member_rows() {
+        global $wpdb;
 
         // Bailout if no permission
         if ( ! is_admin() || ! current_user_can( 'manage_options' ) ) {
             return array();
         }
+
+        // The current pagination number
+        $paged = 1;
+
+        if ( ! empty( absint( $_REQUEST['paged'] ) ) ) {
+            $paged = absint( $_REQUEST['paged'] );
+        }
+
+        // Offset number of users.
+        $offset = ( $paged - 1 ) * self::ROWS_PER_PAGE;
 
         $args = array(
             'meta_query' => array(
@@ -162,11 +173,69 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
                     'value'   => '1',
                     'compare' => '='
                 )
-            )
+            ),
+            'number'     => self::ROWS_PER_PAGE,
+            'offset'     => $offset,
         );
+
+        /**
+         * Get filters
+         */
+        $username = filter_input(
+            INPUT_GET,
+            'username',
+            FILTER_SANITIZE_STRING );
+        $name     = filter_input(
+            INPUT_GET,
+            'name',
+            FILTER_SANITIZE_STRING );
+        $email    = filter_input(
+            INPUT_GET,
+            'email',
+            FILTER_SANITIZE_EMAIL );
+
+        // Create filter query
+        $where_fields = array();
+        if ( ! empty( $username ) ) {
+            $where_fields[] = ' user_login LIKE "%' . esc_attr( $username ) . '%" ';
+        }
+
+        if ( ! empty( $name ) ) {
+            $where_fields[] = ' display_name LIKE "%' . esc_attr( $name ) . '%" ';
+        }
+
+        if ( ! empty( $email ) ) {
+            $where_fields[] = ' user_email LIKE "%' . esc_attr( $email ) . '%" ';
+        }
+        $where = false;
+
+        if ( count( $where_fields ) > 0 ) {
+            $where = ' WHERE 1=1 AND ' . implode( ' AND ', $where_fields );
+
+        }
+        $filter_sql = 'SELECT ID from ' . $wpdb->users . ' ' . $where;
+        $filtered_users = $wpdb->get_col( $filter_sql );
+
+
+		// Add the filtered members to the User Query
+		if ( $where  ) {
+
+			// Do this to avoid listing all users for filters that return no results
+			if ( empty( $filtered_users ) ) {
+				$filtered_users = array( 0 );
+			}
+
+			// Add the filtered member ID to the main query
+			$args['include'] = array_map(
+                'intval',
+                $filtered_users
+            );
+		}
 
         // Results
         $user_query = new WP_User_Query( $args );
+
+        echo "<pre>" . print_r( $user_query->request, 1 ) . "</pre>";
 
         return apply_filters( 'bp-get-blocked-member-result', $user_query, $args );
     }
@@ -176,7 +245,8 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
      *
      * @return void
      */
-    public function prepare_items() {
+    public
+    function prepare_items() {
 
         $columns               = $this->get_columns();
         $sortable              = $this->get_sortable_columns();
@@ -238,7 +308,8 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
      *
      * @return array
      */
-    public function get_bulk_actions() {
+    public
+    function get_bulk_actions() {
         return array();
     }
 
@@ -250,7 +321,10 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
      *
      * @return void
      */
-    protected function display_tablenav( $which ) {
+    protected
+    function display_tablenav(
+        $which
+    ) {
         ?>
 		<div class="tablenav <?php echo esc_attr( $which ); ?>">
 
@@ -279,7 +353,11 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
      * @since 3.1.0
      *
      */
-    public function search_box( $text, $input_id ) {
+    public
+    function search_box(
+        $text,
+        $input_id
+    ) {
 
     }
 
@@ -290,7 +368,10 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
      *
      * @return void
      */
-    protected function name_filter( $which ) {
+    protected
+    function name_filter(
+        $which
+    ) {
         if ( 'top' === $which ) {
             $args = array(
                 'label' => array(
@@ -319,20 +400,23 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
      *
      * @return void
      */
-    protected function id_filter( $which ) {
+    protected
+    function id_filter(
+        $which
+    ) {
         if ( 'top' === $which ) {
             $args = array(
                 'label' => array(
-                    'inner_text' => __( 'Filter by Member ID', 'bp-block-member-posting' ),
+                    'inner_text' => __( 'Filter by Username', 'bp-block-member-posting' ),
                 ),
                 'input' => array(
-                    'name'        => 'member_id',
-                    'id'          => 'member_id',
+                    'name'        => 'username',
+                    'id'          => 'username',
                     'value'       => filter_input(
                         INPUT_GET,
-                        'member_id',
-                        FILTER_SANITIZE_NUMBER_INT ),
-                    'placeholder' => __( 'Member ID', 'bp-block-member-posting' )
+                        'username',
+                        FILTER_SANITIZE_STRING ),
+                    'placeholder' => __( 'Username', 'bp-block-member-posting' )
                 ),
             );
 
@@ -347,7 +431,10 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
      *
      * @return void
      */
-    protected function email_filter( $which ) {
+    protected
+    function email_filter(
+        $which
+    ) {
         if ( 'top' === $which ) {
             $args = array(
                 'label' => array(
@@ -375,7 +462,10 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
      *
      * @return HTML
      */
-    protected function add_filter_buttons( $which ) {
+    protected
+    function add_filter_buttons(
+        $which
+    ) {
 
         if ( $which == 'top' ) {
             ?>
@@ -400,7 +490,10 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
      *
      * @return void
      */
-    private function html_input( $args ) {
+    private
+    function html_input(
+        $args
+    ) {
         $args['input']['type']  = 'text';
         $args['container']      = array( 'class' => 'alignleft actions' );
         $args['label']['class'] = 'screen-reader-text';
