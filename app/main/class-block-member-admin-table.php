@@ -214,28 +214,40 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
 
         }
         $filter_sql = 'SELECT ID from ' . $wpdb->users . ' ' . $where;
+        /**
+         * Add filter to manipulate the filtered users
+         *
+         * @param string $filter_sql The SQL that fetches the filtered user IDs
+         * @param string $where The WHERE part of the SQL
+         * @param array  $where_fields An array of all the filters and columns
+         */
+
+        $filter_sql = apply_filters( 'bp-get-blocked-member-filtered-members-sql',
+            $filter_sql,
+            $where,
+            $where_fields
+        );
+
         $filtered_users = $wpdb->get_col( $filter_sql );
 
 
-		// Add the filtered members to the User Query
-		if ( $where  ) {
+        // Add the filtered members to the User Query
+        if ( $where ) {
 
-			// Do this to avoid listing all users for filters that return no results
-			if ( empty( $filtered_users ) ) {
-				$filtered_users = array( 0 );
-			}
+            // Do this to avoid listing all users for filters that return no results
+            if ( empty( $filtered_users ) ) {
+                $filtered_users = array( 0 );
+            }
 
-			// Add the filtered member ID to the main query
-			$args['include'] = array_map(
+            // Add the filtered member ID to the main query
+            $args['include'] = array_map(
                 'intval',
                 $filtered_users
             );
-		}
+        }
 
         // Results
         $user_query = new WP_User_Query( $args );
-
-        echo "<pre>" . print_r( $user_query->request, 1 ) . "</pre>";
 
         return apply_filters( 'bp-get-blocked-member-result', $user_query, $args );
     }
@@ -321,14 +333,11 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
      *
      * @return void
      */
-    protected
-    function display_tablenav(
-        $which
-    ) {
+    protected function display_tablenav( $which ) {
         ?>
 		<div class="tablenav <?php echo esc_attr( $which ); ?>">
-
             <?php
+
             $this->id_filter( $which );
             $this->name_filter( $which );
             $this->email_filter( $which );
@@ -447,7 +456,7 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
                         INPUT_GET,
                         'email',
                         FILTER_SANITIZE_STRING ),
-                    'placeholder' => __( 'Member Email', 'bp-block-member-posting' )
+                    'placeholder' => __( 'Email', 'bp-block-member-posting' )
                 ),
             );
 

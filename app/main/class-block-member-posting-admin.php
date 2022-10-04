@@ -113,7 +113,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
 							>
 							<label for="block-posting-for-this-member"><?php
                                 printf(
-                                    esc_html__( 'Block %s from posting new activities.',
+                                    esc_html__( 'Block %s from making new posts.',
                                         'bp-block-member-posting' ),
                                     esc_html__( $user->display_name )
                                 ); ?></label>
@@ -125,7 +125,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
 							>
 							<label for="block-commenting-for-this-member"><?php
                                 printf(
-                                    esc_html__( 'Block %s from posting new activity comments.',
+                                    esc_html__( 'Block %s from commenting on activities.',
                                         'bp-block-member-posting' ),
                                     esc_html__( $user->display_name )
                                 ); ?></label>

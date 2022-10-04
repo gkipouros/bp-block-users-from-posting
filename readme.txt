@@ -9,11 +9,11 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Block a member from making new posts for BuddyPress
+Block a member from making new posts and/or activity comments for BuddyPress and BuddyBoss
 
 == Description ==
 
-Allow the admin to block a BuddyPress/BuddyBoss member from posting.
+Allow an admin to block a BuddyPress/BuddyBoss member from posting and commenting.
 
 == Installation ==
 
@@ -26,6 +26,10 @@ Allow the admin to block a BuddyPress/BuddyBoss member from posting.
 There are no FAQ just yet.
 
 == Screenshots ==
+1. Block member settings.
+2. New post form is removed for blocked members.
+3. Activity comment button is removed from blocked members.
+4. The admin list of blocked members.
 
 == Changelog ==
 
