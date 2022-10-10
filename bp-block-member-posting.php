@@ -12,7 +12,7 @@
  * Plugin Name:       Block Member Posting for BuddyPress
  * Plugin URI:        https://gianniskipouros.com/bp-block-member-posting/
  * Description:       Block a member from making new posts for BuddyPress
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Giannis Kipouros
  * Author URI:        https://gianniskipouros.com
  * License:           GPL-2.0+
@@ -30,7 +30,7 @@ if ( ! defined( 'BPBMFP_VERSION' ) ) {
 	/**
 	 * The version of the plugin.
 	 */
-	define( 'BPBMFP_VERSION', '1.0.0' );
+	define( 'BPBMFP_VERSION', '1.0.1' );
 }
 
 if ( ! defined( 'BPBMFP_PATH' ) ) {
@@ -57,7 +57,7 @@ if ( ! defined( 'BPBMFP_BASE_NAME' ) ) {
 /**
  * Include files.
  */
-function bppfn_include_plugin_files() {
+function bpbmfp_include_plugin_files() {
 
     // Bail out if BP is not enabled.
     if ( ! function_exists('bp_is_active') ) {
@@ -88,19 +88,19 @@ function bppfn_include_plugin_files() {
 
 }
 
-add_action( 'plugins_loaded', 'bppfn_include_plugin_files' );
+add_action( 'plugins_loaded', 'bpbmfp_include_plugin_files' );
 
 
 /**
  * Load plugin's textdomain.
  */
-function bppfn_language_textdomain_init() {
+function bpbmfp_language_textdomain_init() {
     // Localization
     load_plugin_textdomain( 'bp-block-member-posting', false, dirname( plugin_basename( __FILE__ ) ) . "/languages" );
 }
 
 // Add actions
-add_action( 'init', 'bppfn_language_textdomain_init' );
+add_action( 'init', 'bpbmfp_language_textdomain_init' );
 
 /**
  * Check whether the member posting is blocked

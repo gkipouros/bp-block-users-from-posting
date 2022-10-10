@@ -32,6 +32,8 @@ There are no FAQ just yet.
 4. The admin list of blocked members.
 
 == Changelog ==
+= 1.0.1 =
+* Fix issue with function prefix
 
 = 1.0 =
 * First Edition release
