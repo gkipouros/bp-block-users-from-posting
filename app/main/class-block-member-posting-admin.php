@@ -47,7 +47,8 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
             //add_action( 'add_tag_form_fields', array( $this, 'add_member_type_fields' ) );
             add_action( 'bp_member_type_edit_form_fields', array( $this, 'add_member_type_fields' ), 40, 2 );
 
-            add_action( 'edited_bp_member_type', array( $this, 'save_block_member_type_selection' ) );
+            add_action( 'bp_init', array( $this, 'save_block_member_type_selection' ), 1 );
+            add_action( 'edit_post', array( $this, 'save_block_member_type_selection' ), 100 );
         }
 
         /**
@@ -204,21 +205,21 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
         /**
 		 * Add custom fields for blocking posting on member type edit page.
 		 *
-         * @param $tag
+         * @param $term
          * @param $taxonomy
          */
-        public function add_member_type_fields( $tag, $taxonomy ) {
+        public function add_member_type_fields( $term, $taxonomy ) {
 
             // Bail out if not in the add/edit member type page.
-            if ( ! isset( $tag->slug ) || empty( $tag->slug ) || ! function_exists( 'bp_get_member_type_object' ) ) {
+            if ( ! isset( $term->slug ) || empty( $term->slug ) || ! function_exists( 'bp_get_member_type_object' ) ) {
                 return;
             }
 
             /**
-             * Get member's selection
+             * Get member types's selection
              */
-            $is_blocked_posting    = get_user_meta( $user->ID, 'bpbmp-block-member-posting', true );
-            $is_blocked_commenting = get_user_meta( $user->ID, 'bpbmp-block-member-commenting', true );
+            $is_blocked_posting    = get_term_meta ( $term->term_id, 'bpbmp-block-member-posting', true );
+            $is_blocked_commenting = get_term_meta ( $term->term_id, 'bpbmp-block-member-commenting', true );
 
             $checked_posting    = '';
             $checked_commenting = '';
@@ -247,7 +248,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
                                 printf(
                                     esc_html__( 'Block "%s" from making new posts.',
                                         'bp-block-member-posting' ),
-                                    esc_html__( $tag->name )
+                                    esc_html__( $term->name )
                                 ); ?></label>
 							<br>
 							<input type="checkbox" name="bp-block-member-type-commenting"
@@ -258,7 +259,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
 							<label for="block-commenting-for-this-member-type"><?php
                                 printf(
                                     esc_html__( 'Block "%s" from commenting on activities.', 'bp-block-member-posting' ),
-                                    esc_html__( $tag->name )
+                                    esc_html__( $term->name )
                                 ); ?></label>
 						</fieldset>
 					</td>
@@ -267,7 +268,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
             <?php
         }
 
-		public function save_block_member_type_selection( $term_id ) {
+		public function save_block_member_type_selection(  ) {
 			echo "<pre>" . print_r( $_REQUEST, 1 )."</pre>";exit;
             if ( ! isset( $_REQUEST['bp-block-member-posting'] ) ||
                  empty( $_REQUEST['bp-block-member-posting'] ) ) {
@@ -297,6 +298,8 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
             } else {
                 delete_term_meta( $term_id, '_tag_color' );
             }
+
+			// Look for private function handle_action( $action ) {
 
         }
     }
