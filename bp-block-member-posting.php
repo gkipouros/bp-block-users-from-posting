@@ -68,6 +68,8 @@ function bpbmfp_include_plugin_files() {
     $files = array(
         'app/main/class-block-member-posting',
         'app/main/class-block-member-posting-admin',
+        'app/main/class-block-member-posting-admin-buddypress',
+        'app/main/class-block-member-posting-admin-buddyboss',
         'app/main/class-block-member-admin-table',
     );
 
@@ -119,7 +121,15 @@ function bp_is_member_posting_blocked( $user_id ) {
             if ( is_array( $member_types ) && count( $member_types ) > 0 ) {
                 // Loop through all the member's member types
                 foreach ( $member_types as $member_type ) {
+
+                    // Check BuddyPress' member type (Term)
                     if ( bp_is_member_type_posting_blocked( $member_type ) ) {
+                        $is_blocked = true;
+                        break;
+                    }
+
+                    // Check BuddyBoss' profile type (CPT)
+                    if ( bp_is_profile_type_posting_blocked( $member_type ) ) {
                         $is_blocked = true;
                         break;
                     }
@@ -147,9 +157,18 @@ function bp_is_member_commenting_blocked( $user_id ) {
             $member_types = bp_get_member_type( $user_id, false );
 
             if ( is_array( $member_types ) && count( $member_types ) > 0 ) {
+
                 // Loop through all the member's member types
                 foreach ( $member_types as $member_type ) {
+
+                    // Check BuddyPress' member type (Term)
                     if ( bp_is_member_type_commenting_blocked( $member_type ) ) {
+                        $is_blocked = true;
+                        break;
+                    }
+
+                    // Check BuddyBoss' profile type (CPT)
+                    if ( bp_is_profile_type_commenting_blocked( $member_type ) ) {
                         $is_blocked = true;
                         break;
                     }
@@ -218,5 +237,75 @@ function bp_is_member_type_commenting_blocked( $member_type ) {
         $is_blocked,
         $member_type,
         $term
+    );
+}
+
+/**
+ * Check whether a member belonging to a specific profile type (BB)
+ * can post new comments
+ *
+ * @param string $member_type
+ */
+function bp_is_profile_type_commenting_blocked( $member_type ) {
+    $is_blocked  = false;
+    $member_type = sanitize_text_field( $member_type );
+
+    if ( ! function_exists( 'bp_member_type_post_by_type' ) ) {
+        return $is_blocked;
+    }
+
+    $post_id = absint( bp_member_type_post_by_type( $member_type ) );
+
+    if ( ! empty( $post_id ) ) {
+        $is_blocked_meta = get_post_meta(
+            $post_id,
+            'bpbmp-block-commenting',
+            true
+        );
+        if ( $is_blocked_meta == 1 ) {
+            $is_blocked = true;
+        }
+    }
+
+    return apply_filters(
+        'bp_is_profile_type_commenting_blocked',
+        $is_blocked,
+        $member_type,
+        $post_id
+    );
+}
+
+/**
+ * Check whether a member belonging to a specific profile type (BB)
+ * can post new activities
+ *
+ * @param string $member_type
+ */
+function bp_is_profile_type_posting_blocked( $member_type ) {
+    $is_blocked  = false;
+    $member_type = sanitize_text_field( $member_type );
+
+    if ( ! function_exists( 'bp_member_type_post_by_type' ) ) {
+        return $is_blocked;
+    }
+
+    $post_id = absint( bp_member_type_post_by_type( $member_type ) );
+
+    if ( ! empty( $post_id ) ) {
+        $is_blocked_meta = get_post_meta(
+            $post_id,
+            'bpbmp-block-posting',
+            true
+        );
+        if ( $is_blocked_meta == 1 ) {
+            $is_blocked = true;
+        }
+    }
+
+    return apply_filters(
+        'bp_is_profile_type_posting_blocked',
+        $is_blocked,
+        $member_type,
+        $post_id
     );
 }
