@@ -4,12 +4,12 @@ Tags: buddypress, members, block, post
 Requires at least: 5.7
 Tested up to: 6.0.2
 Requires PHP: 7.2
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J7GGEGDD4XV5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Block a member from making new posts and/or activity comments for BuddyPress and BuddyBoss
+Block a member or a specific member type from making new posts and/or activity comments for BuddyPress and BuddyBoss
 
 == Description ==
 
@@ -32,6 +32,9 @@ There are no FAQ just yet.
 4. The admin list of blocked members.
 
 == Changelog ==
+
+= 1.0.2 =
+* Add the post and comment blocking of specific member types
 
 = 1.0.1 =
 * Fix issue with function prefix

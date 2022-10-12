@@ -44,11 +44,12 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
             add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_style_scripts' ), 100 );
 
 
-            //add_action( 'add_tag_form_fields', array( $this, 'add_member_type_fields' ) );
-            add_action( 'bp_member_type_edit_form_fields', array( $this, 'add_member_type_fields' ), 40, 2 );
+
+            add_action( 'bp_member_type_edit_form_fields', array( $this, 'add_buddypress_member_type_fields' ), 40, 2 );
 
             add_action( 'bp_init', array( $this, 'save_block_member_type_selection' ), 1 );
-            add_action( 'edit_post', array( $this, 'save_block_member_type_selection' ), 100 );
+
+
         }
 
         /**
@@ -203,12 +204,12 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
         }
 
         /**
-		 * Add custom fields for blocking posting on member type edit page.
-		 *
+         * Add custom fields for blocking posting on member type edit page.
+         *
          * @param $term
          * @param $taxonomy
          */
-        public function add_member_type_fields( $term, $taxonomy ) {
+        public function add_buddypress_member_type_fields( $term, $taxonomy ) {
 
             // Bail out if not in the add/edit member type page.
             if ( ! isset( $term->slug ) || empty( $term->slug ) || ! function_exists( 'bp_get_member_type_object' ) ) {
@@ -218,8 +219,8 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
             /**
              * Get member types's selection
              */
-            $is_blocked_posting    = get_term_meta ( $term->term_id, 'bpbmp-block-member-posting', true );
-            $is_blocked_commenting = get_term_meta ( $term->term_id, 'bpbmp-block-member-commenting', true );
+            $is_blocked_posting    = get_term_meta( $term->term_id, 'bpbmp-block-posting', true );
+            $is_blocked_commenting = get_term_meta( $term->term_id, 'bpbmp-block-commenting', true );
 
             $checked_posting    = '';
             $checked_commenting = '';
@@ -234,13 +235,13 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
 			<table class="form-table block-member-type" role="presentation">
 				<tr>
 					<th scope="row"><?php
-                            esc_html_e( 'Block Member Posting',
-                                'bp-block-member-posting' )
-					?></th>
+                        esc_html_e( 'Block Member Posting',
+                            'bp-block-member-posting' )
+                        ?></th>
 					<td>
 						<fieldset>
 							<input type="checkbox" name="bp-block-member-type-posting"
-								   value="activities"
+								   value="1"
 								   id="block-posting-for-this-member-type"
                                 <?php echo $checked_posting; ?>
 							>
@@ -252,7 +253,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
                                 ); ?></label>
 							<br>
 							<input type="checkbox" name="bp-block-member-type-commenting"
-								   value="commenting"
+								   value="1"
 								   id="block-commenting-for-this-member-type"
                                 <?php echo $checked_commenting; ?>
 							>
@@ -268,39 +269,48 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
             <?php
         }
 
-		public function save_block_member_type_selection(  ) {
-			echo "<pre>" . print_r( $_REQUEST, 1 )."</pre>";exit;
-            if ( ! isset( $_REQUEST['bp-block-member-posting'] ) ||
-                 empty( $_REQUEST['bp-block-member-posting'] ) ) {
-                delete_user_meta( $user_id, 'bpbmp-block-member-posting' );
+        /**
+         * Store the user's "Block Member Posting" selection on the
+         * admin Member Type edit page.
+         *
+         */
+        public function save_block_member_type_selection() {
+            if ( ! isset( $_REQUEST['action'] ) || $_REQUEST['action'] !== 'editedtag' ) {
+                return;
+            }
+
+			// Get current term ID
+            $term_id = ( isset( $_REQUEST['tag_ID'] ) ? absint( $_REQUEST['tag_ID'] ) : 0 );
+
+            if ( $term_id == 0 ) {
+                return;
+            }
+
+            check_admin_referer( 'update-tag_' . $term_id );
+
+            // Set term commenting option
+            if ( ! isset( $_REQUEST['bp-block-member-type-commenting'] ) ||
+                 $_REQUEST['bp-block-member-type-commenting'] != 1 ) {
+                delete_term_meta( $term_id, 'bpbmp-block-commenting' );
             } else {
-                update_user_meta(
-                    $user_id,
-                    'bpbmp-block-member-posting',
+                update_term_meta(
+                    $term_id,
+                    'bpbmp-block-commenting',
                     1
                 );
             }
 
-            if ( ! isset( $_REQUEST['bp-block-member-commenting'] ) ||
-                 empty( $_REQUEST['bp-block-member-commenting'] ) ) {
-                delete_user_meta( $user_id, 'bpbmp-block-member-commenting' );
+            // Set term new post option
+            if ( ! isset( $_REQUEST['bp-block-member-type-posting'] ) ||
+                 $_REQUEST['bp-block-member-type-posting'] != 1 ) {
+                delete_term_meta( $term_id, 'bpbmp-block-posting' );
             } else {
-                update_user_meta(
-                    $user_id,
-                    'bpbmp-block-member-commenting',
+                update_term_meta(
+                    $term_id,
+                    'bpbmp-block-posting',
                     1
                 );
             }
-
-            if( isset( $_POST['_tag_color'] ) && ! empty( $_POST['_tag_color'] ) ) {
-                $sanitized_color = sanitize_hex_color_no_hash($_POST['_tag_color']);
-                update_term_meta( $term_id, '_tag_color', $sanitized_color );
-            } else {
-                delete_term_meta( $term_id, '_tag_color' );
-            }
-
-			// Look for private function handle_action( $action ) {
-
         }
     }
 
