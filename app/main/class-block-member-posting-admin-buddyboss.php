@@ -75,7 +75,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin_BuddyBoss' ) ) {
             ?>
 			<div id="bp-member-type-label-box" class="postbox ">
 				<div class="postbox-header">
-					<h2 ><?php
+					<h2><?php
                         esc_html_e( 'Block Member Posting',
                             'bp-block-member-posting' )
                         ?></h2>
@@ -90,10 +90,15 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin_BuddyBoss' ) ) {
                                     <?php echo $checked_posting; ?>
 								>
 								<label for="block-posting-for-this-member-type"><?php
+                                    $profile_type = esc_html__( $post->post_title );
+                                    if ( empty( $profile_type ) ) {
+                                        $profile_type = __( 'this profile type',
+                                            'bp-block-member-posting' );
+                                    }
                                     printf(
-                                        esc_html__( 'Block "%s" from making new posts.',
+                                        esc_html__( 'Block members of %s from making new posts.',
                                             'bp-block-member-posting' ),
-                                        esc_html__( $post->post_title )
+                                        $profile_type
                                     ); ?></label>
 								<br>
 								<input type="checkbox" name="bp-block-member-type-commenting"
@@ -102,9 +107,10 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin_BuddyBoss' ) ) {
                                     <?php echo $checked_commenting; ?>
 								>
 								<label for="block-commenting-for-this-member-type"><?php
+
                                     printf(
-                                        esc_html__( 'Block "%s" from commenting on activities.', 'bp-block-member-posting' ),
-                                        esc_html__( $post->post_title )
+                                        esc_html__( 'Block members of %s from commenting on activities.', 'bp-block-member-posting' ),
+                                        $profile_type
                                     ); ?></label>
 							</fieldset>
 						</td>
@@ -124,7 +130,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin_BuddyBoss' ) ) {
             $post_id = absint( $post_id );
 
             if ( ! isset( $_REQUEST['action'] ) || $_REQUEST['action'] !== 'editpost' ||
-                 ! isset( $_REQUEST['post_type'] ) || $_REQUEST['post_type'] !== 'bp-member-type') {
+                 ! isset( $_REQUEST['post_type'] ) || $_REQUEST['post_type'] !== 'bp-member-type' ) {
                 return;
             }
 

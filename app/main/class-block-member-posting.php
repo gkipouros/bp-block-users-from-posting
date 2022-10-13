@@ -41,8 +41,12 @@ if ( ! class_exists( 'BP_Block_Member_Posting' ) ) {
                 $this,
                 'block_activity_comments'
             ), 10, 2 );
-        }
 
+            add_filter( 'bp_nouveau_get_activity_comment_buttons', array(
+                $this,
+                'block_activity_reply_to_comments'
+            ), 10 );
+        }
 
         /**
          * Enqueue style/script.
@@ -123,6 +127,29 @@ if ( ! class_exists( 'BP_Block_Member_Posting' ) ) {
             return $buttons;
         }
 
+
+        /**
+         * Block new replies to comments button if the member is blocked.
+         *
+         * @param $buttons
+         * @param $activity_id
+         * @param
+         *
+         *
+         * @return boolean
+         */
+        public function block_activity_reply_to_comments( $buttons ) {
+            $user_id = absint( get_current_user_id() );
+
+            if ( $user_id > 0 && bp_is_member_commenting_blocked( $user_id ) ) {
+
+                if ( isset( $buttons['activity_comment_reply'] ) ) {
+                    unset( $buttons['activity_comment_reply'] );
+                }
+            }
+
+            return $buttons;
+        }
 
     }
 
