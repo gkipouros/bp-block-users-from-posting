@@ -38,18 +38,23 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
             add_action( 'edit_user_profile_update',
                 array( $this, 'store_admin_block_member_option' ), 20, 1 );
 
-            add_action( 'admin_menu',
-                array( $this, 'admin_blocked_members_page_menu' ), 20, 1 );
             // Enqueue Back end scripts
             add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_style_scripts' ), 100 );
-
-
 
             add_action( 'bp_member_type_edit_form_fields', array( $this, 'add_buddypress_member_type_fields' ), 40, 2 );
 
             add_action( 'bp_init', array( $this, 'save_block_member_type_selection' ), 1 );
 
+            // Customize Admin User management page
+            add_filter( 'manage_users_columns',
+                array( $this, 'add_blocked_member_columns' ), 40 );
 
+            add_filter( 'manage_users_custom_column',
+                array( $this, 'add_blocked_member_columns_content' ), 10, 3 );
+
+            add_filter( 'views_users', array( $this, 'add_blocked_member_filters' ), 30 );
+
+            add_filter( 'pre_get_users', array( $this, 'filter_the_admin_user_results' ) );
         }
 
         /**
@@ -67,20 +72,8 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
                 BPBMFP_VERSION
             );
 
-
             wp_enqueue_script( 'ceu_user_reports-admin-custom-script' );
         }
-
-        /**
-         * Get plugin admin area root page: settings.php for WPMS and tool.php for WP.
-         *
-         * @return string
-         */
-        private function get_root_admin_page() {
-
-            return is_multisite() ? 'settings.php' : 'tools.php';
-        }
-
 
         /**
          * Add admin option to block member to edit user page
@@ -142,8 +135,6 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
 				</tr>
 			</table>
             <?php
-
-
         }
 
         /**
@@ -176,32 +167,6 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
             }
         }
 
-        /**
-         * Add a submenu for the admin management page
-         */
-        public function admin_blocked_members_page_menu() {
-            add_submenu_page(
-                $this->get_root_admin_page(),
-                __( 'Blocked Members Management for BuddyPress', 'bp-block-member-posting' ),
-                __( 'BP Block Members', 'bp-block-member-posting' ),
-                'manage_options',
-                'bp-block-member-posting',
-                array( $this, 'blocked_members_admin_page_callback' )
-            );
-        }
-
-        /**
-         * Callback function for the admin management page content
-         */
-        public function blocked_members_admin_page_callback() {
-            $template = BPBMFP_PATH . 'templates/bp-block-members-admin-page.php';
-
-            /**
-             * Add filter to manage the displayed template
-             */
-            $template = apply_filters( 'bp_blocked_members_admin_page_template', $template );
-            include_once( $template );
-        }
 
         /**
          * Add custom fields for blocking posting on member type edit page.
@@ -279,7 +244,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
                 return;
             }
 
-			// Get current term ID
+            // Get current term ID
             $term_id = ( isset( $_REQUEST['tag_ID'] ) ? absint( $_REQUEST['tag_ID'] ) : 0 );
 
             if ( $term_id == 0 ) {
@@ -311,6 +276,123 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
                     1
                 );
             }
+        }
+
+        /**
+         * Add Blocked Member columns to user management page
+         *
+         * @param $columns
+         *
+         * @return mixed
+         */
+        public function add_blocked_member_columns( $columns ) {
+            $columns['block_posting']    = __( 'Posting', 'bp-block-member-posting' );
+            $columns['block_commenting'] = __( 'Commenting', 'bp-block-member-posting' );
+
+            return $columns;
+        }
+
+        /**
+         * Add content to the blocked member columns
+         *
+         * @param $val
+         * @param $column_name
+         * @param $user_id
+         *
+         * @return mixed|string
+         */
+        public function add_blocked_member_columns_content( $val, $column_name, $user_id ) {
+            switch ( $column_name ) {
+                case 'block_posting' :
+                    $blocked = "";
+                    if ( bp_is_member_posting_blocked( $user_id ) ) {
+                        $blocked = '<span class="dashicons dashicons-dismiss"></span>';
+                    }
+
+                    return $blocked;
+                case 'block_commenting' :
+                    $blocked = "";
+                    if ( bp_is_member_commenting_blocked( $user_id ) ) {
+                        $blocked = '<span class="dashicons 
+								dashicons-welcome-comments"></span>';
+                    }
+
+                    return $blocked;
+                default:
+            }
+
+            return $val;
+        }
+
+        /**
+         * Add User admin filters
+         *
+         * @param $views
+         *
+         * @return mixed|string
+         */
+        public function add_blocked_member_filters( $views ) {
+
+            $blocked_members = bp_get_blocked_members_list();
+
+            $blocked_posting_count    = 0;
+            $blocked_commenting_count = 0;
+
+            if ( isset( $blocked_members['posting'] )
+                 && is_array( $blocked_members['posting'] ) ) {
+                $blocked_posting_count = count( $blocked_members['posting'] );
+            }
+
+            if ( isset( $blocked_members['commenting'] )
+                 && is_array( $blocked_members['commenting'] ) ) {
+                $blocked_commenting_count = count( $blocked_members['commenting'] );
+            }
+
+            $views['block_posting'] = "<a href='users.php?block-filter=posting'>" . __( 'Blocked Posting', 'bp-block-member-posting' ) . " <span class='count'>(" . $blocked_posting_count . ")</span></a>";
+
+            $views['block_commenting'] = "<a href='users.php?block-filter=commenting'>" . __( 'Blocked Commenting', 'bp-block-member-posting' ) . " <span class='count'>(" . $blocked_commenting_count . ")</span></a>";
+
+            return $views;
+        }
+
+
+        public function filter_the_admin_user_results( $query ) {
+            if ( ! is_admin() || ! isset ( $_REQUEST['block-filter'] ) || ! is_main_query() ) {
+                return $query;
+            }
+
+            $block_filter = sanitize_text_field( $_REQUEST['block-filter'] );
+            $user_id_list = array();
+            remove_filter( 'pre_get_users', array( $this, 'filter_the_admin_user_results' ) );
+            $blocked_users = bp_get_blocked_members_list();
+            add_filter( 'pre_get_users', array( $this, 'filter_the_admin_user_results' ) );
+
+
+            if ( $block_filter == 'posting' ) {
+                if ( isset( $blocked_users['posting'] ) &&
+                     is_array(  $blocked_users['posting'] ) ) {
+                    $user_id_list = $blocked_users['posting'];
+                }
+
+            }
+			else if ( $block_filter == 'commenting' ) {
+                if ( isset( $blocked_users['commenting'] ) &&
+                     is_array(  $blocked_users['commenting'] ) ) {
+                    $user_id_list = $blocked_users['commenting'];
+                }
+
+            }
+
+			if ( empty( $user_id_list )) {
+				$user_id_list = array( 0 );
+            }
+
+			$included = (array) $query->query_vars['include'];
+			$included = $included + $user_id_list;
+
+            $query->query_vars['include'] = $included;
+
+            return $query;
         }
     }
 

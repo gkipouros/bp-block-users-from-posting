@@ -70,7 +70,6 @@ function bpbmfp_include_plugin_files() {
         'app/main/class-block-member-posting-admin',
         'app/main/class-block-member-posting-admin-buddypress',
         'app/main/class-block-member-posting-admin-buddyboss',
-        'app/main/class-block-member-admin-table',
     );
 
     // Include Includes files
@@ -309,3 +308,46 @@ function bp_is_profile_type_posting_blocked( $member_type ) {
         $post_id
     );
 }
+
+/**
+ * Get a list of blocked members for both posting and commenting
+ *
+ * @return mixed
+ */
+function bp_get_blocked_members_list() {
+    $transient_key = 'bp_get_blocked_members_list';
+
+    $blocked_users_posting = get_transient( $transient_key );
+
+    if ( empty( $blocked_users_posting ) || ! is_array( $blocked_users_posting ) ) {
+
+
+        $blocked_users_posting = array(
+            'posting'    => array(),
+            'commenting' => array(),
+        );
+
+        $args  = array(
+            'fields' => 'ID',
+            'order'  => 'ID'
+        );
+        $users = get_users( $args );
+
+        if ( is_array( $users ) && count( $users ) > 0 ) {
+            foreach ( $users as $user_id ) {
+                if ( bp_is_member_posting_blocked( $user_id ) ) {
+                    $blocked_users_posting['posting'][] = $user_id;
+                }
+                if ( bp_is_member_commenting_blocked( $user_id ) ) {
+                    $blocked_users_posting['commenting'][] = $user_id;
+                }
+            }
+        }
+
+        // Set Transient for 10 seconds so it does not load again
+        set_transient( $transient_key, $blocked_users_posting, 10 );
+    }
+
+    return apply_filters( 'bp_get_blocked_members_posting', $blocked_users_posting );
+}
+

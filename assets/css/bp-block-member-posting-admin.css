@@ -1,24 +1,12 @@
-
-#bp-blocked-members-table th#user_login {
-
-}
-#bp-blocked-members-table td.user_login {
-	display: flex;
-}
-#bp-blocked-members-table td.user_login .user-login-username {
-	margin-left: 12px;
-}
-#bp-blocked-members-table th#member_email,
-#bp-blocked-members-table td.member_email {
-	white-space: nowrap;
+.wp-admin .wp-list-table.users .column-block_posting,
+.wp-admin .wp-list-table.users .block_posting{
 	text-align: center;
 }
-#bp-blocked-members-table th#posting_blocked,
-#bp-blocked-members-table td.posting_blocked,
-#bp-blocked-members-table th#commenting_blocked,
-#bp-blocked-members-table td.commenting_blocked{
+.wp-admin .wp-list-table.users .column-block_commenting,
+.wp-admin .wp-list-table.users .block_commenting{
 	text-align: center;
 }
-#bp-blocked-members-table td .dashicons{
+.wp-admin .wp-list-table.users .block_posting .dashicons,
+.wp-admin .wp-list-table.users .block_commenting .dashicons{
 	color: #d54e21;
 }
