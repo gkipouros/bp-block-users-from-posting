@@ -30,8 +30,6 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin_BuddyPress' ) ) {
 
         private function load_hooks() {
 
-            add_action( 'bp_member_type_edit_form_fields', array( $this, 'add_buddypress_member_type_fields' ), 40, 2 );
-
             add_action( 'bp_init', array( $this, 'save_block_member_type_selection' ), 1 );
         }
 
