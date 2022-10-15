@@ -31,6 +31,8 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin_BuddyPress' ) ) {
         private function load_hooks() {
 
             add_action( 'bp_init', array( $this, 'save_block_member_type_selection' ), 1 );
+
+            add_action( 'bp_member_type_edit_form_fields', array( $this, 'add_buddypress_member_type_fields' ), 40, 2 );
         }
 
 
@@ -78,7 +80,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin_BuddyPress' ) ) {
 							>
 							<label for="block-posting-for-this-member-type"><?php
                                 printf(
-                                    esc_html__( 'Block "%s" from making new posts.',
+                                    esc_html__( 'Block members of %s from making new posts.',
                                         'bp-block-member-posting' ),
                                     esc_html__( $term->name )
                                 ); ?></label>
@@ -90,7 +92,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin_BuddyPress' ) ) {
 							>
 							<label for="block-commenting-for-this-member-type"><?php
                                 printf(
-                                    esc_html__( 'Block "%s" from commenting on activities.', 'bp-block-member-posting' ),
+                                    esc_html__( 'Block members of %s from commenting on activities.', 'bp-block-member-posting' ),
                                     esc_html__( $term->name )
                                 ); ?></label>
 						</fieldset>

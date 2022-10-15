@@ -15,6 +15,8 @@ Block a member or a specific member/profile type from making new posts and activ
 
 Allow an admin to block a BuddyPress/BuddyBoss member from posting and commenting.
 
+You can block a member directly or block entire member/profile types.
+
 == Installation ==
 
 1. Upload "Block Member Posting for BuddyPress" plugin into the directory `wp-content/plugins/`.
@@ -27,7 +29,7 @@ There are no FAQ just yet.
 
 == Screenshots ==
 1. New post form is removed for blocked members.
-2. Activity comment button is removed from blocked members.
+2. Activity comment and reply buttons are removed for blocked members.
 3. Admin Users list has new columns and filters for blocked members.
 4. The options to block a specific member from posting.
 5. The options to block a specific Profile Type from posting (BuddyBoss).
@@ -35,8 +37,9 @@ There are no FAQ just yet.
 
 == Changelog ==
 
-= 1.0.2 =
-* Add the post and comment blocking of specific member types
+= 1.1.0 =
+* Add the post and comment blocking of specific member types (BuddyPress) or profile types (BuddyBoss).
+* Block comment replies for members that have their comments blocked.
 
 = 1.0.1 =
 * Fix issue with function prefix

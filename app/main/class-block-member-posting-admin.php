@@ -41,7 +41,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
             // Enqueue Back end scripts
             add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_style_scripts' ), 100 );
 
-            add_action( 'bp_member_type_edit_form_fields', array( $this, 'add_buddypress_member_type_fields' ), 40, 2 );
+
 
             add_action( 'bp_init', array( $this, 'save_block_member_type_selection' ), 1 );
 
@@ -167,72 +167,6 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
             }
         }
 
-
-        /**
-         * Add custom fields for blocking posting on member type edit page.
-         *
-         * @param $term
-         * @param $taxonomy
-         */
-        public function add_buddypress_member_type_fields( $term, $taxonomy ) {
-
-            // Bail out if not in the add/edit member type page.
-            if ( ! isset( $term->slug ) || empty( $term->slug ) || ! function_exists( 'bp_get_member_type_object' ) ) {
-                return;
-            }
-
-            /**
-             * Get member types's selection
-             */
-            $is_blocked_posting    = get_term_meta( $term->term_id, 'bpbmp-block-posting', true );
-            $is_blocked_commenting = get_term_meta( $term->term_id, 'bpbmp-block-commenting', true );
-
-            $checked_posting    = '';
-            $checked_commenting = '';
-
-            if ( $is_blocked_posting == 1 ) {
-                $checked_posting = 'checked';
-            }
-            if ( $is_blocked_commenting == 1 ) {
-                $checked_commenting = 'checked';
-            }
-            ?>
-			<table class="form-table block-member-type" role="presentation">
-				<tr>
-					<th scope="row"><?php
-                        esc_html_e( 'Block Member Posting',
-                            'bp-block-member-posting' )
-                        ?></th>
-					<td>
-						<fieldset>
-							<input type="checkbox" name="bp-block-member-type-posting"
-								   value="1"
-								   id="block-posting-for-this-member-type"
-                                <?php echo $checked_posting; ?>
-							>
-							<label for="block-posting-for-this-member-type"><?php
-                                printf(
-                                    esc_html__( 'Block "%s" from making new posts.',
-                                        'bp-block-member-posting' ),
-                                    esc_html__( $term->name )
-                                ); ?></label>
-							<br>
-							<input type="checkbox" name="bp-block-member-type-commenting"
-								   value="1"
-								   id="block-commenting-for-this-member-type"
-                                <?php echo $checked_commenting; ?>
-							>
-							<label for="block-commenting-for-this-member-type"><?php
-                                printf(
-                                    esc_html__( 'Block "%s" from commenting on activities.', 'bp-block-member-posting' ),
-                                    esc_html__( $term->name )
-                                ); ?></label>
-						</fieldset>
-					</td>
-				</tr>
-			</table>
-            <?php
-        }
 
         /**
          * Store the user's "Block Member Posting" selection on the
