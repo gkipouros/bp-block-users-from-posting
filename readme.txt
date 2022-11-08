@@ -2,7 +2,7 @@
 Contributors: giannis4
 Tags: buddypress, members, block, post
 Requires at least: 5.7
-Tested up to: 6.0.2
+Tested up to: 6.1
 Requires PHP: 7.2
 Stable tag: 1.1.0
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J7GGEGDD4XV5
@@ -15,7 +15,11 @@ Block a member or a specific member/profile type from making new posts and activ
 
 Allow an admin to block a BuddyPress/BuddyBoss member from posting and commenting.
 
-You can block a member directly or block entire member/profile types.
+You can block single members or all members belonging to a specific profile type.
+
+**Like this plugin? Please consider [leaving a 5-star review](https://wordpress.org/support/plugin/bp-block-member-posting/reviews/#new-post).**
+
+**Do you want customizations: Contact me at [gianniskipouros.com](https://gianniskipouros.com/).**
 
 == Installation ==
 
