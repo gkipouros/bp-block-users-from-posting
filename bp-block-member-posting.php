@@ -12,7 +12,7 @@
  * Plugin Name:       Block Member Posting for BuddyPress
  * Plugin URI:        https://gianniskipouros.com/bp-block-member-posting/
  * Description:       Block a member from making new posts for BuddyPress
- * Version:           1.1.0
+ * Version:           1.1.1
  * Author:            Giannis Kipouros
  * Author URI:        https://gianniskipouros.com
  * License:           GPL-2.0+
@@ -30,7 +30,7 @@ if ( ! defined( 'BPBMFP_VERSION' ) ) {
     /**
      * The version of the plugin.
      */
-    define( 'BPBMFP_VERSION', '1.1.0' );
+    define( 'BPBMFP_VERSION', '1.1.1' );
 }
 
 if ( ! defined( 'BPBMFP_PATH' ) ) {
