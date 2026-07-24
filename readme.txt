@@ -1,9 +1,9 @@
 === Block Member Posting for BuddyPress ===
 Contributors: giannis4
 Tags: buddypress, members, block, post
-Requires at least: 5.7
-Tested up to: 6.7.1
-Requires PHP: 7.2
+Requires at least: 6
+Tested up to: 7.0.2
+Requires PHP: 7.4
 Stable tag: 1.1.3
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J7GGEGDD4XV5
 License: GPLv2 or later
