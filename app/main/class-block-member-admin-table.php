@@ -153,7 +153,7 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
         // The current pagination number
         $paged = 1;
 
-        if ( ! empty( absint( $_REQUEST['paged'] ) ) ) {
+        if ( isset( $_REQUEST['paged'] ) && absint( $_REQUEST['paged'] ) > 0 ) {
             $paged = absint( $_REQUEST['paged'] );
         }
 
@@ -181,54 +181,56 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
         /**
          * Get filters
          */
-        $username = filter_input(
-            INPUT_GET,
-            'username',
-            FILTER_SANITIZE_STRING );
-        $name     = filter_input(
-            INPUT_GET,
-            'name',
-            FILTER_SANITIZE_STRING );
-        $email    = filter_input(
-            INPUT_GET,
-            'email',
-            FILTER_SANITIZE_EMAIL );
+        $username = isset( $_GET['username'] ) ? sanitize_text_field( wp_unslash( $_GET['username'] ) ) : '';
+        $name     = isset( $_GET['name'] ) ? sanitize_text_field( wp_unslash( $_GET['name'] ) ) : '';
+        $email    = isset( $_GET['email'] ) ? sanitize_email( wp_unslash( $_GET['email'] ) ) : '';
 
-        // Create filter query
+        // Create filter query using prepared placeholders to avoid SQL injection.
         $where_fields = array();
+        $where_values = array();
+
         if ( ! empty( $username ) ) {
-            $where_fields[] = ' user_login LIKE "%' . esc_attr( $username ) . '%" ';
+            $where_fields[] = 'user_login LIKE %s';
+            $where_values[] = '%' . $wpdb->esc_like( $username ) . '%';
         }
 
         if ( ! empty( $name ) ) {
-            $where_fields[] = ' display_name LIKE "%' . esc_attr( $name ) . '%" ';
+            $where_fields[] = 'display_name LIKE %s';
+            $where_values[] = '%' . $wpdb->esc_like( $name ) . '%';
         }
 
         if ( ! empty( $email ) ) {
-            $where_fields[] = ' user_email LIKE "%' . esc_attr( $email ) . '%" ';
+            $where_fields[] = 'user_email LIKE %s';
+            $where_values[] = '%' . $wpdb->esc_like( $email ) . '%';
         }
-        $where = false;
+
+        $where      = false;
+        $filter_sql = '';
 
         if ( count( $where_fields ) > 0 ) {
-            $where = ' WHERE 1=1 AND ' . implode( ' AND ', $where_fields );
-
+            $where      = ' WHERE 1=1 AND ' . implode( ' AND ', $where_fields );
+            $filter_sql = $wpdb->prepare( 'SELECT ID FROM ' . $wpdb->users . $where, $where_values );
         }
-        $filter_sql = 'SELECT ID from ' . $wpdb->users . ' ' . $where;
+
         /**
          * Add filter to manipulate the filtered users
          *
-         * @param string $filter_sql The SQL that fetches the filtered user IDs
-         * @param string $where The WHERE part of the SQL
-         * @param array  $where_fields An array of all the filters and columns
+         * @param string $filter_sql   The SQL that fetches the filtered user IDs.
+         * @param string $where        The WHERE part of the SQL.
+         * @param array  $where_fields An array of all the filters and columns.
          */
+        $filtered_users = array();
 
-        $filter_sql = apply_filters( 'bp-get-blocked-member-filtered-members-sql',
-            $filter_sql,
-            $where,
-            $where_fields
-        );
+        if ( $where ) {
+            $filter_sql = apply_filters(
+                'bp-get-blocked-member-filtered-members-sql',
+                $filter_sql,
+                $where,
+                $where_fields
+            );
 
-        $filtered_users = $wpdb->get_col( $filter_sql );
+            $filtered_users = $wpdb->get_col( $filter_sql );
+        }
 
 
         // Add the filtered members to the User Query
@@ -389,10 +391,7 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
                 'input' => array(
                     'name'        => 'name',
                     'id'          => 'name',
-                    'value'       => filter_input(
-                        INPUT_GET,
-                        'name',
-                        FILTER_SANITIZE_STRING ),
+                    'value'       => isset( $_GET['name'] ) ? sanitize_text_field( wp_unslash( $_GET['name'] ) ) : '',
                     'placeholder' => __( 'Name', 'bp-block-member-posting' )
                 ),
             );
@@ -421,10 +420,7 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
                 'input' => array(
                     'name'        => 'username',
                     'id'          => 'username',
-                    'value'       => filter_input(
-                        INPUT_GET,
-                        'username',
-                        FILTER_SANITIZE_STRING ),
+                    'value'       => isset( $_GET['username'] ) ? sanitize_text_field( wp_unslash( $_GET['username'] ) ) : '',
                     'placeholder' => __( 'Username', 'bp-block-member-posting' )
                 ),
             );
@@ -452,10 +448,7 @@ class BP_Block_Member_Admin_Table extends \WP_List_Table {
                 'input' => array(
                     'name'        => 'email',
                     'id'          => 'email',
-                    'value'       => filter_input(
-                        INPUT_GET,
-                        'email',
-                        FILTER_SANITIZE_STRING ),
+                    'value'       => isset( $_GET['email'] ) ? sanitize_text_field( wp_unslash( $_GET['email'] ) ) : '',
                     'placeholder' => __( 'Email', 'bp-block-member-posting' )
                 ),
             );

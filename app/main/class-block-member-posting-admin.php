@@ -43,8 +43,6 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
 
 
 
-            add_action( 'bp_init', array( $this, 'save_block_member_type_selection' ), 1 );
-
             // Customize Admin User management page
             add_filter( 'manage_users_columns',
                 array( $this, 'add_blocked_member_columns' ), 40 );
@@ -71,8 +69,6 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
                 '',
                 BPBMFP_VERSION
             );
-
-            wp_enqueue_script( 'ceu_user_reports-admin-custom-script' );
         }
 
         /**
@@ -116,7 +112,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
                                 printf(
                                     esc_html__( 'Block %s from making new posts.',
                                         'bp-block-member-posting' ),
-                                    esc_html__( $user->display_name )
+                                    esc_html( $user->display_name )
                                 ); ?></label>
 							<br>
 							<input type="checkbox" name="bp-block-member-commenting"
@@ -128,7 +124,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
                                 printf(
                                     esc_html__( 'Block %s from commenting on activities.',
                                         'bp-block-member-posting' ),
-                                    esc_html__( $user->display_name )
+                                    esc_html( $user->display_name )
                                 ); ?></label>
 						</fieldset>
 					</td>
@@ -162,51 +158,6 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
                 update_user_meta(
                     $user_id,
                     'bpbmp-block-member-commenting',
-                    1
-                );
-            }
-        }
-
-
-        /**
-         * Store the user's "Block Member Posting" selection on the
-         * admin Member Type edit page.
-         *
-         */
-        public function save_block_member_type_selection() {
-            if ( ! isset( $_REQUEST['action'] ) || $_REQUEST['action'] !== 'editedtag' ) {
-                return;
-            }
-
-            // Get current term ID
-            $term_id = ( isset( $_REQUEST['tag_ID'] ) ? absint( $_REQUEST['tag_ID'] ) : 0 );
-
-            if ( $term_id == 0 ) {
-                return;
-            }
-
-            check_admin_referer( 'update-tag_' . $term_id );
-
-            // Set term commenting option
-            if ( ! isset( $_REQUEST['bp-block-member-type-commenting'] ) ||
-                 $_REQUEST['bp-block-member-type-commenting'] != 1 ) {
-                delete_term_meta( $term_id, 'bpbmp-block-commenting' );
-            } else {
-                update_term_meta(
-                    $term_id,
-                    'bpbmp-block-commenting',
-                    1
-                );
-            }
-
-            // Set term new post option
-            if ( ! isset( $_REQUEST['bp-block-member-type-posting'] ) ||
-                 $_REQUEST['bp-block-member-type-posting'] != 1 ) {
-                delete_term_meta( $term_id, 'bpbmp-block-posting' );
-            } else {
-                update_term_meta(
-                    $term_id,
-                    'bpbmp-block-posting',
                     1
                 );
             }
@@ -321,7 +272,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin' ) ) {
 				$user_id_list = array( 0 );
             }
 
-			$included = (array) $query->query_vars['include'];
+			$included = isset( $query->query_vars['include'] ) ? (array) $query->query_vars['include'] : array();
 			$included = $included + $user_id_list;
 
             $query->query_vars['include'] = $included;

@@ -82,7 +82,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin_BuddyPress' ) ) {
                                 printf(
                                     esc_html__( 'Block members of %s from making new posts.',
                                         'bp-block-member-posting' ),
-                                    esc_html__( $term->name )
+                                    esc_html( $term->name )
                                 ); ?></label>
 							<br>
 							<input type="checkbox" name="bp-block-member-type-commenting"
@@ -93,7 +93,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin_BuddyPress' ) ) {
 							<label for="block-commenting-for-this-member-type"><?php
                                 printf(
                                     esc_html__( 'Block members of %s from commenting on activities.', 'bp-block-member-posting' ),
-                                    esc_html__( $term->name )
+                                    esc_html( $term->name )
                                 ); ?></label>
 						</fieldset>
 					</td>

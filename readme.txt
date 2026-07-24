@@ -4,7 +4,7 @@ Tags: buddypress, members, block, post
 Requires at least: 5.7
 Tested up to: 6.7.1
 Requires PHP: 7.2
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J7GGEGDD4XV5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -40,6 +40,14 @@ There are no FAQ just yet.
 6. The options to block a specific Member Type from posting (BuddyPress).
 
 == Changelog ==
+
+= 1.1.3 =
+* Security: Use prepared statements for the blocked-members admin filter query.
+* Fix: Escape dynamic member/profile names with esc_html() instead of the translation functions.
+* Fix: Remove duplicate member-type save handler that stored term meta twice.
+* Fix: Remove enqueue of an unregistered admin script handle.
+* Fix: Print the correct notice when BuddyPress is disabled on the admin list page.
+* Fix: Resolve PHP 8 "undefined array key" warnings and replace the deprecated FILTER_SANITIZE_STRING.
 
 = 1.1.2 =
 * Update: WordPress 6.7.1

@@ -22,7 +22,7 @@ if ( function_exists( 'bp_core_fetch_avatar' ) ) {
 			</form>
             <?php
         } else {
-            __( 'Unfortunately, BuddyPress is disabled!', 'bp-block-member-posting' );
+            esc_html_e( 'Unfortunately, BuddyPress is disabled!', 'bp-block-member-posting' );
 
         }
         ?>

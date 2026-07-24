@@ -90,7 +90,7 @@ if ( ! class_exists( 'BP_Block_Member_Posting_Admin_BuddyBoss' ) ) {
                                     <?php echo $checked_posting; ?>
 								>
 								<label for="block-posting-for-this-member-type"><?php
-                                    $profile_type = esc_html__( $post->post_title );
+                                    $profile_type = esc_html( $post->post_title );
                                     if ( empty( $profile_type ) ) {
                                         $profile_type = __( 'this profile type',
                                             'bp-block-member-posting' );
