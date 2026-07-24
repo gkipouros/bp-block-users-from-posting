@@ -2,9 +2,9 @@
 Contributors: giannis4
 Tags: buddypress, members, block, post
 Requires at least: 5.7
-Tested up to: 6.2
+Tested up to: 6.7.1
 Requires PHP: 7.2
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J7GGEGDD4XV5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -40,6 +40,10 @@ There are no FAQ just yet.
 6. The options to block a specific Member Type from posting (BuddyPress).
 
 == Changelog ==
+
+= 1.1.2 =
+* Update: WordPress 6.7.1
+* Update: BuddyPress 14.3.3
 
 = 1.1.0 =
 * Add the post and comment blocking of specific member types (BuddyPress) or profile types (BuddyBoss).
