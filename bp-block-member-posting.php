@@ -4,13 +4,13 @@
  *
  * Block a member from making new posts and posting comments for BuddyPress
  *
- * @link              https://gianniskipouros.com/block-member-posting-for-buddypress/
+ * @link              https://thewpgarden.com/plugins/bp-block-member-posting/
  * @since             1.0.0
  * @package           bp-block-member-posting
  *
  * @wordpress-plugin
  * Plugin Name:       Block Member Posting for BuddyPress
- * Plugin URI:        https://gianniskipouros.com/bp-block-member-posting/
+ * Plugin URI:        https://thewpgarden.com/
  * Description:       Block a member from making new posts for BuddyPress
  * Version:           1.1.3
  * Author:            Giannis Kipouros
