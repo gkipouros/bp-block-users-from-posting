@@ -10,11 +10,11 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Block Member Posting for BuddyPress
- * Plugin URI:        https://thewpgarden.com/
+ * Plugin URI:        https://thewpgarden.com/plugins/bp-block-member-posting/
  * Description:       Block a member from making new posts for BuddyPress
  * Version:           1.1.3
- * Author:            Giannis Kipouros
- * Author URI:        https://gianniskipouros.com
+ * Author:            The WP Garden
+ * Author URI:        https://thewpgarden.com
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       bp-block-member-posting

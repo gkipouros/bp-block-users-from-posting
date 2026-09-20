@@ -1,5 +1,5 @@
 === Block Member Posting for BuddyPress ===
-Contributors: giannis4
+Contributors: giannis4, thewpgarden
 Tags: buddypress, members, block, post
 Requires at least: 6
 Tested up to: 7.0.2
