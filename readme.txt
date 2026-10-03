@@ -53,7 +53,7 @@ Block Member Posting makes those members read-only on the activity feed. Block o
 
 = Documentation and support =
 
-📖 [Plugin page](https://thewpgarden.com/plugins/bp-block-member-posting/): overview and screenshots.
+📖 [Documentation](https://thewpgarden.com/docs/bp-block-member-posting/): setup and a guide for every feature, from [blocking a member](https://thewpgarden.com/docs/bp-block-member-posting/block-a-member-from-posting/) to [blocking a member type](https://thewpgarden.com/docs/bp-block-member-posting/block-a-member-type-from-posting/) and [finding blocked members](https://thewpgarden.com/docs/bp-block-member-posting/find-blocked-members/).
 
 🛟 [Support forum](https://wordpress.org/support/plugin/bp-block-member-posting/): questions and bug reports. We answer every topic.
 
@@ -112,6 +112,10 @@ Yes. It works with BuddyBoss Platform as well as BuddyPress, and supports BuddyB
 = Does it block posting through the REST API or a mobile app? =
 
 No. It removes the post form and the comment and reply buttons on the website, which is how members post there. Posts made through the REST API or a separate app are not blocked.
+
+= Where is the documentation? =
+
+At [thewpgarden.com/docs/bp-block-member-posting](https://thewpgarden.com/docs/bp-block-member-posting/): setup, plus a guide for every feature.
 
 = How do I get support? =
 
